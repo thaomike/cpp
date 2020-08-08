@@ -1,58 +1,30 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-int n,k;
-int a[1003], b[1003];
-bool flag = false;
-vector<int> d;
+int pre[1005];
 
-void process()
+void postOrder(int d, int c)
 {
-    for(int i=k;i>=1;i--)
-    {
-        if(a[i] < n-k+i)
-        {
-            b[i] = a[i]+1;
-            for(int j = i+1;j<=k;j++)
-            {
-                b[j] = b[j-1]+1;
-            }
-            flag = true;
+    int i;
+    if (d > c)
+        return;
+    for (i = d + 1; i <= c; i++)
+        if (pre[i] > pre[d])
             break;
-        }
-    }
-    if(flag) for(int i=1;i<=k;i++) d[b[i]]++;
+    postOrder(d + 1, i - 1);
+    postOrder(i, c);
+    cout << pre[d] << " ";
 }
 
-int res()
+main()
 {
-    int tmp = 0;
-    if(!flag) return k;
-    for(int i=1;i<=n;i++)
+    int t, n, i;
+    cin >> t;
+    while (t--)
     {
-        if(d[i] == 2) 
-        {
-            tmp++;
-        }
-    }
-    return (k-tmp);
-}
-
-int main() {
-    int t;
-    cin>>t;
-    while(t--)
-    {
-        cin>>n>>k;
-        d.clear();
-        d.resize(n+1);
-        flag = false;
-        for(int i=1;i<=k;i++) 
-        {
-            cin>>a[i];
-            b[i] = a[i];
-            d[a[i]] = 1;
-        }
-        process();
-        cout<<res()<<endl;
+        cin >> n;
+        for (i = 0; i < n; i++)
+            cin >> pre[i];
+        postOrder(0, n - 1);
+        cout << endl;
     }
 }

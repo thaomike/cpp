@@ -1,50 +1,80 @@
 #include<bits/stdc++.h>
 using namespace std;
-typedef vector<int> vi;
-int n;
-long long a;
-vector< long long > d;
-long long res[502];
 
-void pre()
-{
-    for(int i=1;i<=500;i++)
+typedef struct node {
+    int val;
+    int level;
+    struct node *left=NULL, *right = NULL;
+    node();
+    node(int val,int level)
     {
-        int tmp = i;
-        if(i%9==0) tmp /= 9;
-        else if(i%3 == 0) tmp /= 3;
-        for(int j=1;j<d.size();j++)
+        this->level = level;
+        this->val = val;
+    }
+} *tree;
+
+void bfs(tree root)
+{
+    stack<tree> s1,s2;
+    s1.push(root);
+    while (s1.size() || s2.size())
+    {
+        while(s1.size())
         {
-            if(d[j] % tmp == 0)
-            {
-                res[i] = d[j]*9;
-                break;
-            }
+            tree u = s1.top();
+            cout<<u->val<<" ";
+            s1.pop();
+            if(u->right) s2.push(u->right);
+            if(u->left) s2.push(u->left);
+        }
+        while(s2.size())
+        {
+            tree u = s2.top();
+            cout<<u->val<<" ";
+            s2.pop();
+            if(u->left) s1.push(u->left);
+            if(u->right) s1.push(u->right);
         }
     }
 }
 
-int main() {
+
+int main()
+{
     int t;
     cin>>t;
-    d.push_back(0);
-    d.push_back(1);
-    a = 1;
-
-    for(int i=2;i<=18;i++)
+    while(t--)
     {
-        a *= 10;
-        int m = d.size();
-        for(int j=0;j<m;j++) {
-            d.push_back(a+d[j]);
-        }
-    }
-
-    pre();
-    for(int i=0;i<501;i++) cout<<res[i]<<endl;
-    while (t--)
-    {
+        map<int, tree> m;
+        int n;
         cin>>n;
-        cout<<res[n]<<endl;
+        tree root = NULL;
+        int n1,n2;
+        char lr;
+        for(int i=0;i<n;i++)
+        {
+            tree father;
+            cin>>n1>>n2>>lr;
+            if(m.find(n1) == m.end())
+            {
+                father = new node(n1,0);
+                m[n1] = father;
+                if(!root) root = father;
+            } else
+            {
+                father = m[n1];
+            }
+            father = m[n1];
+            tree child = new node(n2,father->level+1);
+            if (lr == 'L')
+                father->left = child;
+            else
+            {
+                father->right = child;
+            }
+            m[n2] = child;
+        }
+        bfs(root);
+        cout<<endl;
     }
 }

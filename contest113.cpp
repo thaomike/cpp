@@ -1,51 +1,45 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-int n,k;
-string s;
-vector<string> res;
-void process(int i, int p, bool flag)
+int n;
+int pre[1003], in[1003];
+
+int search(int pre[], int val, int s)
 {
-    if(i == n-k+1 && flag)
+    for (int i = 0; i < s; i++)
     {
-        string tmp = "";
-        for(int i=0;i<n-k+1;i++)
-        {
-            if(s[i] == 'C')
-            {
-                for(int j=0;j<k;j++) tmp += "A";
-//tmp += s[i];
-            }
-            else
-            {
-                tmp += s[i];
-            }
-        }
-//        cout<<tmp;
-        res.push_back(tmp);
-//        cout<<"we";
+        if (pre[i] == val)
+            return i;
     }
-    else
-    {
-        s[i] = 'B'; if(i<n-k+1) process(i+1,0,flag);
-        if((i == 0 || s[i-1] != 'C' ) && p < k-1){
-            s[i] = 'A';
-			if(i<n-k+1) process(i+1, p+1, flag);
-        }
-        if(!flag && (i == 0 || s[i-1] != 'A'))// && (i == n-k || s[i+1] != 'A'))
-        {
-            s[i] = 'C';
-            if(i<n-k+1) process(i+1,0,true);
-        }
-    }
-    
+    return -1;
 }
 
-int main() {
-    cin>>n>>k;
-    s.resize(n);
-//    cout<<s.size();
-    process(0,0,false);
-    sort(res.begin(),res.end());
-    cout<<res.size()<<endl;
-    for(int i=0;i<res.size();i++) cout<<res[i]<<endl;
+void process(int in[], int pre[], int n)
+{
+    int root = search(in, pre[0], n);
+    if (root != 0) 
+    {
+        //xac dinh cay con trai
+        process(in, pre + 1, root);
+    }
+    if (root != n - 1)
+    {
+        process(in + root + 1, pre + root + 1, n - root - 1);
+    }
+    cout << pre[0] << " ";
+}
+
+int main()
+{
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        cin >> n;
+        for (int i = 0; i < n; i++)
+            cin >> in[i];
+        for (int i = 0; i < n; i++)
+            cin >> pre[i];
+        process(in,pre,n);
+        cout<<endl;
+    }
 }

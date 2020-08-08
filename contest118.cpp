@@ -1,37 +1,77 @@
 #include<bits/stdc++.h>
 using namespace std;
-int n,s;
-int t[33];
-int res = INT_MAX;
 
-void process(int tmp) {
-    if(s == 0)
+typedef struct node {
+    int val;
+    int level;
+    struct node *left=NULL, *right = NULL;
+    node();
+    node(int val,int level)
     {
-        res = min(res, tmp);
+        this->level = level;
+        this->val = val;
     }
-    for(int i=0;i<n;i++)
+} *tree;
+
+void bfs(tree root)
+{
+    stack<int> st;
+    queue<tree> q;
+    q.push(root);
+
+    while (q.size())
     {
-        if(s >= t[i])
-        {
-            tmp++;
-            s -= t[i];
-            if(tmp < res) process(tmp);
-            tmp--;
-            s += t[i];
-        }
+        tree u = q.front();
+        q.pop();
+        st.push(u->val);
+        if(u->right) q.push(u->right);
+        if(u->left) q.push(u->left);
     }
+    while (st.size())
+    {
+        cout<<st.top()<<" ";
+        st.pop();
+    }
+    
 }
 
-int main() {
-    cin>>n>>s;
-    for(int i=0;i<n;i++) cin>>t[i];
-    if(s == 0)
+
+int main()
+{
+    int t;
+    cin>>t;
+    while(t--)
     {
-        cout<<0;
-        return 0;
+        map<int, tree> m;
+        int n;
+        cin>>n;
+        tree root = NULL;
+        int n1,n2;
+        char lr;
+        for(int i=0;i<n;i++)
+        {
+            tree father;
+            cin>>n1>>n2>>lr;
+            if(m.find(n1) == m.end())
+            {
+                father = new node(n1,0);
+                m[n1] = father;
+                if(!root) root = father;
+            } else
+            {
+                father = m[n1];
+            }
+            father = m[n1];
+            tree child = new node(n2,father->level+1);
+            if (lr == 'L')
+                father->left = child;
+            else
+            {
+                father->right = child;
+            }
+            m[n2] = child;
+        }
+        bfs(root);
+        cout<<endl;
     }
-    sort(t,t+n, greater <int> ());
-    // cout<<t[0];
-    process(0);
-    cout<<res;
 }
